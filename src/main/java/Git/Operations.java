@@ -2,23 +2,33 @@ package Git;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.List;
 
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.PushCommand;
+import org.eclipse.jgit.api.RemoteAddCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
+import com.mashape.unirest.http.exceptions.UnirestException;
+
+import gitLab.Projects;
 
 import static com.practise.git.GitController.repos;
 
 public class Operations {
 
+	private static String localPath = "C://Users//defaultuser0//Desktop//clone repos//";
+	private static String baseUrl = "https://gitlab.com/test1390527/";
+
 	// clone by workspace token
 	// https://support.atlassian.com/bitbucket-cloud/docs/using-workspace-access-tokens/
-
 	public String cloneRepo(String workspace, String repo, String accessToken) {
 		String repoUrl = "https://x-token-auth" + "@bitbucket.org" + "/" + workspace + "/" + repo;
-		String localpath = "C:\\Users\\defaultuser0\\Desktop\\clone repos\\" + repo;
+		String localpath = localPath + repo;
 		File tempGitDirectory;
 		try {
 			tempGitDirectory = new File(localpath);
@@ -52,5 +62,23 @@ public class Operations {
 		return "All";
 	}
 
+	public String pushRepo(String repo) throws IOException, UnirestException, GitAPIException, URISyntaxException {
+		List<String> repos = Projects.getAllProjects();
+		if (!repos.contains(repo)) {
+			Projects.createRepo(repo);
+		}
+		Git git = Git.open(new File(localPath + repo));
+		RemoteAddCommand remoteAddCommand = git.remoteAdd();
+		remoteAddCommand.setName("origins");
+		remoteAddCommand.setUri(new URIish(baseUrl + repo + ".git"));
+		remoteAddCommand.call();
 
+		PushCommand pushCommand = git.push();
+		pushCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider("PRIVATE-TOKEN", "glpat-MhGbQnrfi2esKbFcErwt"));
+		pushCommand.setPushAll();
+		pushCommand.setRemote("origins");
+		pushCommand.call();
+
+		return "Repository:" + repo + " pushed successfully";
+	}
 }

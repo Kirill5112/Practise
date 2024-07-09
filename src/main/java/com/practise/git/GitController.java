@@ -1,6 +1,10 @@
 package com.practise.git;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
+
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,14 +55,18 @@ public class GitController {
 		return ret;
 	}
 
-	@GetMapping("clone/{workspace}/{repo}")
+	@GetMapping("/clone/{workspace}/{repo}")
 	public String cloneRepo(@PathVariable String workspace, @PathVariable String repo) {
 		return operation.cloneRepo(workspace, repo, accessToken);
 	}
 
-	@GetMapping("clone/all")
+	@GetMapping("/clone/all")
 	public String cloneAll() {
 		return operation.CloneAll(accessToken);
 	}
-	
+
+	@GetMapping("/push/{repo}")
+	public String pushRepo(@PathVariable String repo) throws IOException, UnirestException, GitAPIException, URISyntaxException {
+			return operation.pushRepo(repo);
+	}
 }
