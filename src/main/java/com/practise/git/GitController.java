@@ -34,7 +34,7 @@ public class GitController {
 	public static ArrayList<String> repos = new ArrayList<String>();
 	private String workspace = "";
 
-	@GetMapping("/{source}/{purpose}")
+	@GetMapping("/findAll/{source}/{purpose}")
 	public String FindAllRepos(@PathVariable String source, @PathVariable String purpose) throws UnirestException {
 		if (!source.equals(Source.BITBUCKET.getGit()) || !purpose.equals(Source.GITLAB.getGit()))
 			throw new UnsupportedOperationException();
@@ -60,7 +60,7 @@ public class GitController {
 		return operation.cloneRepo(workspace, repo, accessToken);
 	}
 
-	@GetMapping("/clone/all")
+	@GetMapping("/cloneAll")
 	public String cloneAll() {
 		return operation.CloneAll(accessToken);
 	}
@@ -68,5 +68,10 @@ public class GitController {
 	@GetMapping("/push/{repo}")
 	public String pushRepo(@PathVariable String repo) throws IOException, UnirestException, GitAPIException, URISyntaxException {
 			return operation.pushRepo(repo);
+	}
+	
+	@GetMapping("/pushAll")
+	public String pushAll() throws IOException, UnirestException, GitAPIException, URISyntaxException {
+		return operation.pushAll();
 	}
 }
