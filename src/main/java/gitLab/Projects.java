@@ -9,12 +9,13 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
+import static GettingStarted.User.*;
+
 public class Projects {
-	private static final String accessToken = "glpat-MhGbQnrfi2esKbFcErwt";
 
 	public static List<String> getAllProjects() throws UnirestException {
 		Map<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put("private_token", accessToken);
+		parameters.put("private_token", privateToken);
 		parameters.put("owned", true);
 		parameters.put("visibility", "private");
 		HttpResponse<String> response = Unirest.get("https://gitlab.com/api/v4/projects").queryString(parameters)
@@ -30,7 +31,7 @@ public class Projects {
 		fields.put("initialize_with_readme", false);
 		fields.put("description", "Created by my git API");
 		fields.put("visibility", "private");
-		Unirest.post("https://gitlab.com/api/v4/projects").header("PRIVATE-TOKEN", accessToken).fields(fields)
+		Unirest.post("https://gitlab.com/api/v4/projects").header("PRIVATE-TOKEN", privateToken).fields(fields)
 				.asString();
 	}
 }

@@ -26,26 +26,23 @@ import gitLab.Projects;
 import stringParser.Repos;
 import stringParser.Token;
 
+import static GettingStarted.User.*;
+
 public class Operations {
 	private String workspace = "";
 	public static ArrayList<String> repos = new ArrayList<String>();
 	private static final String accessToken = Token.setToken();
-	private static final String localPath = "C://Users//defaultuser0//Desktop//clone repos//";
-	private static final String baseUrl = "https://gitlab.com/test1390527/";
-	private static final String baseUrlBitBucket = "https://rxiashuv65e0871cb9k6stdv-admin@bitbucket.org/rxiashuv65e0871cb9k6stdv48qpw2/";
-	private static final String privateToken = "glpat-MhGbQnrfi2esKbFcErwt";
 	private final static UsernamePasswordCredentialsProvider user = new UsernamePasswordCredentialsProvider(
 			"x-token-auth", accessToken);
 
 	public String FindAllRepos(String source, String purpose) throws UnirestException {
 		if (!source.equals(Source.BITBUCKET.getGit()) || !purpose.equals(Source.GITLAB.getGit()))
 			throw new UnsupportedOperationException();
-		Token.setToken();
 		HttpResponse<JsonNode> response = Unirest
-				.get("https://api.bitbucket.org/2.0/repositories/rxiashuv65e0871cb9k6stdv48qpw2")
+				.get("https://api.bitbucket.org/2.0/repositories/"+bitbucketWorkpace)
 				.header("Accept", "application/json").header("Authorization", "Bearer " + accessToken).asJson();
 		if (response.getStatus() == 401)
-			return "Токен устарел";
+			return "Bad Request";
 		String body = response.getBody().toString();
 		workspace = Repos.WorkspaceParser(body);
 		repos = Repos.NamesParser(body);
@@ -147,7 +144,7 @@ public class Operations {
 		try {
 			RemoteAddCommand remoteAddCommand = git.remoteAdd();
 			remoteAddCommand.setName("origins");
-			remoteAddCommand.setUri(new URIish(baseUrl + repo + ".git"));
+			remoteAddCommand.setUri(new URIish(baseUrlGitLAb + repo + ".git"));
 			remoteAddCommand.call();
 
 			PushCommand pushCommand = git.push();
